@@ -1,3 +1,4 @@
+export const runtime = "nodejs";
 import Stripe from 'stripe';
 import { redirect } from 'next/navigation';
 import { Team } from '@/lib/db/schema';
