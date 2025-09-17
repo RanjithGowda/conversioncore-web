@@ -153,6 +153,7 @@ export default function APIDocumentation() {
                     <Phone className="h-4 w-4 mr-2 text-[#00BFFF]" />
                     <span className="font-semibold text-white">phoneNumbers:</span> array[object] - An array of phone numbers.
                   </li>
+                   <span className=" text-gray-400">A maximum of five phone numbers may be returned for a person. If the individual is identified as a known TCPA litigator, none of their phone numbers will be included in the Skiptrace response. Otherwise, phone numbers may be returned even if they are listed on a Do Not Call (DNC) registry.</span>
                 </ul>
               </div>
             </div>
