@@ -38,7 +38,13 @@ function UserMenu() {
         >
           Skip Tracing
         </Link>
-        <Button asChild className="rounded-full">
+        <Link
+          href="/realtor-automation"
+          className="text-sm font-medium text-gray-700 hover:text-gray-900 ml-4"
+        >
+          Realtor Automation
+        </Link>
+        <Button asChild className="rounded-full ml-4">
           <Link href="/sign-in">Sign In</Link>
         </Button>
       </>
