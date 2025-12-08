@@ -1,4 +1,45 @@
+"use client";
 
+// CountUp hook for animated numbers with easing
+function useCountUp({ end, duration = 1, decimals = 0 }) {
+  const [value, setValue] = useState(0);
+  useEffect(() => {
+    let startTime = Date.now();
+    const timer = setInterval(() => {
+      const elapsed = Date.now() - startTime;
+      const progress = Math.min(elapsed / (duration * 1000), 1);
+      
+      // Cubic ease-out: starts fast, slows down towards end
+      const easedProgress = 1 - Math.pow(1 - progress, 3);
+      
+      const currentValue = easedProgress * end;
+      
+      if (progress >= 1) {
+        setValue(end);
+        clearInterval(timer);
+      } else {
+        setValue(Number(currentValue.toFixed(decimals)));
+      }
+    }, 1000 / 60);
+    return () => clearInterval(timer);
+  }, [end, duration, decimals]);
+  return value;
+}
+
+// MetricCard component for animated metrics
+function MetricCard({ end, suffix = '', label, decimals = 0 }) {
+  const value = useCountUp({ end, duration: 1.2, decimals });
+  return (
+    <div className="bg-[#1e2746]/80 rounded-2xl shadow-lg p-6 flex flex-col items-center">
+      <span className="text-4xl font-bold text-[#00BFFF]">
+        {value.toLocaleString(undefined, { maximumFractionDigits: decimals })}{suffix}
+      </span>
+      <span className="mt-2 text-lg text-gray-200 text-center">{label}</span>
+    </div>
+  );
+}
+
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Phone, Rocket, Zap, Brain } from 'lucide-react';
 import {
@@ -8,39 +49,34 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import Image from 'next/image';
 
 export default function RealtorAutomationPage() {
   return (
     <main className="bg-gradient-to-br from-[#142A63] via-[#1e2746] to-[#00BFFF] min-h-screen text-white">
       <section className="pt-8 pb-2">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative flex justify-center items-center" style={{ minHeight: '320px' }}>
-          <img
-            src="/img/ConversionCoreARE.png"
-            alt="Realtor Automation Flow"
-            className="w-full h-auto rounded-3xl shadow-2xl border border-[#1e2746] relative z-10"
-            style={{ objectFit: 'contain' }}
-          />
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative flex justify-center items-center">
+          <div className="w-full flex justify-center mb-4">
+            <div className="relative max-w-6xl w-full">
+              <Image
+                src="/img/ConversionCoreARE.png"
+                alt="Realtor Automation & Lead Revival System"
+                width={1152}
+                height={512}
+                className="rounded-2xl w-full h-auto object-contain shadow-lg"
+                priority
+              />
+            </div>
+          </div>
         </div>
       </section>
       <section className="py-6">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mb-10">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-            <div className="bg-[#1e2746]/80 rounded-2xl shadow-lg p-6 flex flex-col items-center">
-              <span className="text-4xl font-bold text-[#00BFFF]">12,500+</span>
-              <span className="mt-2 text-lg text-gray-200 text-center">Expired Listings Processed Monthly</span>
-            </div>
-            <div className="bg-[#1e2746]/80 rounded-2xl shadow-lg p-6 flex flex-col items-center">
-              <span className="text-4xl font-bold text-[#00BFFF]">78%</span>
-              <span className="mt-2 text-lg text-gray-200 text-center">Owner Contact Rate</span>
-            </div>
-            <div className="bg-[#1e2746]/80 rounded-2xl shadow-lg p-6 flex flex-col items-center">
-              <span className="text-4xl font-bold text-[#00BFFF]">320+</span>
-              <span className="mt-2 text-lg text-gray-200 text-center">Appointments Booked Last Month</span>
-            </div>
-            <div className="bg-[#1e2746]/80 rounded-2xl shadow-lg p-6 flex flex-col items-center">
-              <span className="text-4xl font-bold text-[#00BFFF]">2,100+</span>
-              <span className="mt-2 text-lg text-gray-200 text-center">Active Realtors Using System</span>
-            </div>
+            <MetricCard end={12500} suffix="+" label="Expired Listings Processed Monthly" />
+            <MetricCard end={78} suffix="%" label="Owner Contact Rate" decimals={0} />
+            <MetricCard end={320} suffix="+" label="Appointments Booked Last Month" />
+            <MetricCard end={2100} suffix="+" label="Active Realtors Using System" />
           </div>
         </div>
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center gap-12">
