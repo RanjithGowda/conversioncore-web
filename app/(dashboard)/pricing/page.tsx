@@ -2,6 +2,7 @@ import { Check } from 'lucide-react';
 
 import { getStripePrices, getStripeProducts } from '@/lib/payments/stripe';
 import { checkoutAction } from '@/lib/payments/actions';
+import { SubmitButton } from './submit-button';
 
 export default async function PricingPage() {
   const [prices, products] = await Promise.all([

@@ -1,7 +1,10 @@
 "use client";
 
+// Prevent prerendering of this page since it uses Date.now()
+export const dynamic = 'force-dynamic';
+
 // CountUp hook for animated numbers with easing
-function useCountUp({ end, duration = 1, decimals = 0 }) {
+function useCountUp({ end, duration = 1, decimals = 0 }: { end: number; duration?: number; decimals?: number }) {
   const [value, setValue] = useState(0);
   useEffect(() => {
     let startTime = Date.now();
@@ -27,7 +30,7 @@ function useCountUp({ end, duration = 1, decimals = 0 }) {
 }
 
 // MetricCard component for animated metrics
-function MetricCard({ end, suffix = '', label, decimals = 0 }) {
+function MetricCard({ end, suffix = '', label, decimals = 0 }: { end: number; suffix?: string; label: string; decimals?: number }) {
   const value = useCountUp({ end, duration: 1.2, decimals });
   return (
     <div className="bg-[#1e2746]/80 rounded-2xl shadow-lg p-6 flex flex-col items-center">
