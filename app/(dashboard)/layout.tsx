@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { use, useState, Suspense } from 'react';
 import { Button } from '@/components/ui/button';
-import { CircleIcon, Home, LogOut } from 'lucide-react';
+import { CircleIcon, Home, LogOut, Menu as MenuIcon, X as CloseIcon } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,7 +18,7 @@ import useSWR, { mutate } from 'swr';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
-function UserMenu() {
+function UserMenu({ vertical = false }: { vertical?: boolean } = {}) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { data: user } = useSWR<User>('/api/user', fetcher);
   const router = useRouter();
@@ -31,7 +31,7 @@ function UserMenu() {
 
   if (!user) {
     return (
-      <>
+      <div className={vertical ? 'flex flex-col gap-4' : 'flex flex-row items-center'}>
         <Link
           href="/skip-tracing"
           className="text-sm font-medium text-gray-700 hover:text-gray-900"
@@ -40,14 +40,14 @@ function UserMenu() {
         </Link>
         <Link
           href="/realtor-automation"
-          className="text-sm font-medium text-gray-700 hover:text-gray-900 ml-4"
+          className={vertical ? 'text-sm font-medium text-gray-700 hover:text-gray-900' : 'text-sm font-medium text-gray-700 hover:text-gray-900 ml-4'}
         >
           Realtor Automation
         </Link>
-        <Button asChild className="rounded-full ml-4">
+        <Button asChild className={vertical ? 'rounded-full mt-2' : 'rounded-full ml-4'}>
           <Link href="/sign-in">Sign In</Link>
         </Button>
-      </>
+      </div>
     );
   }
 
@@ -89,6 +89,7 @@ function UserMenu() {
 }
 
 function Header() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   return (
     <header className="border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
@@ -96,12 +97,29 @@ function Header() {
           <CircleIcon className="h-6 w-6 text-orange-500 animate-pulse" />
           <span className="ml-2 text-xl font-semibold text-gray-900">ConversionCore.AI</span>
         </Link>
-        <div className="flex items-center space-x-4">
+        {/* Desktop menu */}
+        <div className="hidden md:flex items-center space-x-4">
           <Suspense fallback={<div className="h-9" />}>
             <UserMenu />
           </Suspense>
         </div>
+        {/* Hamburger icon for mobile */}
+        <button
+          className="md:hidden p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          onClick={() => setMobileMenuOpen((v) => !v)}
+          aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
+        >
+          {mobileMenuOpen ? <CloseIcon className="h-7 w-7" /> : <MenuIcon className="h-7 w-7" />}
+        </button>
       </div>
+      {/* Mobile menu dropdown */}
+      {mobileMenuOpen && (
+        <div className="md:hidden bg-white border-b border-gray-200 shadow-lg px-4 py-4">
+          <Suspense fallback={<div className="h-9" />}>
+            <UserMenu vertical />
+          </Suspense>
+        </div>
+      )}
     </header>
   );
 }
