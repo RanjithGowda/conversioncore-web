@@ -10,19 +10,18 @@ export default async function PricingPage() {
     getStripeProducts(),
   ]);
 
-  // const basePlan = products.find((product) => product.name === 'Property ST - Plan 1');
-  // const plusPlan = products.find((product) => product.name === 'Property ST - Plan 2');
-
-  //Testing
+  // Find plans
   const basePlan = products.find((product) => product.name === 'Property ST - Plan 1');
   const plusPlan = products.find((product) => product.name === 'Property ST - Plan 2');
+  const realtorAutomationPlan = products.find((product) => product.name === 'Realtor Automation');
 
   const basePrice = prices.find((price) => price.productId === basePlan?.id);
   const plusPrice = prices.find((price) => price.productId === plusPlan?.id);
+  const realtorAutomationPrice = prices.find((price) => price.productId === realtorAutomationPlan?.id);
 
   return (
     <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <div className="grid md:grid-cols-2 gap-8 max-w-xl mx-auto">
+      <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
         <PricingCard
           name={basePlan?.name || 'Base'}
           price={basePrice?.unitAmount || 800}
@@ -48,6 +47,20 @@ export default async function PricingPage() {
           ]}
           priceId={plusPrice?.id}
         />
+        {realtorAutomationPlan && realtorAutomationPrice && (
+          <PricingCard
+            name={realtorAutomationPlan.name}
+            price={realtorAutomationPrice.unitAmount || 2000}
+            interval={realtorAutomationPrice.interval || 'month'}
+            trialDays={realtorAutomationPrice.trialPeriodDays || 7}
+            features={[
+              'Automated Realtor Workflows',
+              'Advanced Integrations',
+              'Priority Support',
+            ]}
+            priceId={realtorAutomationPrice.id}
+          />
+        )}
       </div>
     </main>
   );

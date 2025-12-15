@@ -30,41 +30,25 @@ function UserMenu({ vertical = false }: { vertical?: boolean } = {}) {
   }
 
   if (!user) {
-    return (
-      <div className={vertical ? 'flex flex-col gap-4' : 'flex flex-row items-center'}>
-        <Link
-          href="/skip-tracing"
-          className="text-sm font-medium text-gray-700 hover:text-gray-900"
-        >
-          Skip Tracing
-        </Link>
-        <Link
-          href="/realtor-automation"
-          className={vertical ? 'text-sm font-medium text-gray-700 hover:text-gray-900' : 'text-sm font-medium text-gray-700 hover:text-gray-900 ml-4'}
-        >
-          Realtor Automation
-        </Link>
-        <Button asChild className={vertical ? 'rounded-full mt-2' : 'rounded-full ml-4'}>
-          <Link href="/sign-in">Sign In</Link>
-        </Button>
-      </div>
-    );
+    return null;
   }
 
+  // For authenticated users, only show avatar and dropdown for account actions
   return (
     <DropdownMenu open={isMenuOpen} onOpenChange={setIsMenuOpen}>
       <DropdownMenuTrigger>
         <Avatar className="cursor-pointer size-9">
           <AvatarImage alt={user.name || ''} />
           <AvatarFallback className='capitalize'>
-            {user.name !=null?user.name!
-              .split(' ')
-              .map((n) => n[0])
-              .join(''):user.email!
-              .split(' ')
-              .map((n) => n[0])
-              .join('')}
-            
+            {user.name != null
+              ? user.name!
+                  .split(' ')
+                  .map((n) => n[0])
+                  .join('')
+              : user.email!
+                  .split(' ')
+                  .map((n) => n[0])
+                  .join('')}
           </AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
@@ -90,6 +74,7 @@ function UserMenu({ vertical = false }: { vertical?: boolean } = {}) {
 
 function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { data: user } = useSWR<User>('/api/user', fetcher);
   return (
     <header className="border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
@@ -99,9 +84,27 @@ function Header() {
         </Link>
         {/* Desktop menu */}
         <div className="hidden md:flex items-center space-x-4">
-          <Suspense fallback={<div className="h-9" />}>
-            <UserMenu />
-          </Suspense>
+          <Link
+            href="/skip-tracing"
+            className="text-sm font-medium text-gray-700 hover:text-gray-900"
+          >
+            Skip Tracing
+          </Link>
+          <Link
+            href="/realtor-automation"
+            className="text-sm font-medium text-gray-700 hover:text-gray-900"
+          >
+            Realtor Automation
+          </Link>
+          {!user ? (
+            <Button asChild className="rounded-full ml-4">
+              <Link href="/sign-in">Sign In</Link>
+            </Button>
+          ) : (
+            <Suspense fallback={<div className="h-9" />}>
+              <UserMenu />
+            </Suspense>
+          )}
         </div>
         {/* Hamburger icon for mobile */}
         <button
@@ -115,9 +118,27 @@ function Header() {
       {/* Mobile menu dropdown */}
       {mobileMenuOpen && (
         <div className="md:hidden bg-white border-b border-gray-200 shadow-lg px-4 py-4">
-          <Suspense fallback={<div className="h-9" />}>
-            <UserMenu vertical />
-          </Suspense>
+          <Link
+            href="/skip-tracing"
+            className="block text-sm font-medium text-gray-700 hover:text-gray-900 mb-2"
+          >
+            Skip Tracing
+          </Link>
+          <Link
+            href="/realtor-automation"
+            className="block text-sm font-medium text-gray-700 hover:text-gray-900 mb-2"
+          >
+            Realtor Automation
+          </Link>
+          {!user ? (
+            <Button asChild className="rounded-full w-full mt-2">
+              <Link href="/sign-in">Sign In</Link>
+            </Button>
+          ) : (
+            <Suspense fallback={<div className="h-9" />}>
+              <UserMenu vertical />
+            </Suspense>
+          )}
         </div>
       )}
     </header>
