@@ -1,4 +1,6 @@
+
 'use client';
+import React from 'react';
 
 import { useActionState } from 'react';
 import { Button } from '@/components/ui/button';
@@ -98,6 +100,9 @@ function SubscriptionSkeleton() {
 function ManageSubscription() {
   const { data: teamData } = useSWR<TeamDataWithMembers>('/api/team', fetcher);
 
+  const [isPending, setIsPending] = React.useState(false);
+  const formRef = React.useRef<HTMLFormElement>(null);
+
   return (
     <Card className="mb-8">
       <CardHeader>
@@ -118,9 +123,25 @@ function ManageSubscription() {
                   : 'No active subscription'}
               </p>
             </div>
-            <form action={customerPortalAction}>
-              <Button type="submit" variant="outline">
-                Manage Subscription
+            <form ref={formRef} action={customerPortalAction}>
+              <Button
+                type="button"
+                variant="outline"
+                disabled={isPending}
+                onClick={() => {
+                  setIsPending(true);
+                  // submit the form programmatically
+                  formRef.current?.submit();
+                }}
+              >
+                {isPending ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Loading...
+                  </>
+                ) : (
+                  'Manage Subscription'
+                )}
               </Button>
             </form>
           </div>
